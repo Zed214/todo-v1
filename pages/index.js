@@ -122,7 +122,7 @@ export default function Home() {
           className="border rounded my-2 p-2 h-10 flex justify-between shadow-sm gap-2"
         >
           <Link className="w-max flex-grow" href={`/todo/${item.id}`}>
-            <h4 className="font-semibold   hover:font-bold ">{item.title}</h4>
+            <h4 className="font-semibold hover:font-bold text-md">{item.title}</h4>
           </Link>
           {_.isEmpty(editTodo) && (
             <div className="space-x-4">
