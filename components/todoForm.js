@@ -21,7 +21,6 @@ export default function TodoForm({ objTodo, onClose }) {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
     editItemMutation.mutate(data);
     onClose();
   };

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const todoApi = axios.create({
-  baseURL: "https://6476fa7e9233e82dd53aa166.mockapi.io",
+  baseURL: process.env.NEXT_PUBLIC_DATA_URL,
 });
 
 //*----------- TODOS ------------
@@ -39,7 +39,7 @@ export const getItems = async (todoID) => {
 };
 
 export const addItem = async (todoID, itemData) => {
-  const response = await todoApi.post(`/todos/${todoID}/item`, itemData);
+  const response = await todoApi.post(`/todos/${todoID}/item`, { ...itemData, id: new Date() });
   return response.data;
 };
 

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addTodo, deleteTodo, getTodos } from "../utils/dataFetching";
+import { addTodo, deleteItem, deleteTodo, getItems, getTodos } from "../utils/dataFetching";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
@@ -34,7 +34,14 @@ export default function Home() {
   });
 
   const deleteTodoMutation = useMutation({
-    mutationFn: (todoID) => deleteTodo(todoID),
+    mutationFn: async (todoID) => {
+      const todoItems = await getItems(todoID);
+
+      for (const item of todoItems) {
+        await deleteItem(todoID, item.id);
+      }
+      await deleteTodo(todoID);
+    },
     onSuccess: () => queryClient.invalidateQueries(["todos"]),
   });
 
@@ -48,15 +55,18 @@ export default function Home() {
     setNewTodoTitle("");
   };
 
-  if (status === "loading")
+  if (status === "loading" || deleteTodoMutation.status === "loading")
     return (
-      <span className="loading loading-dots loading-lg  my-10 mx-auto flex justify-center text-primary"></span>
+      <div>
+        <span className="loading loading-dots loading-lg  my-10 mx-auto flex justify-center text-primary"></span>
+      </div>
     );
 
   // *-----------------------------------
   // * ----------- FILTER DATA -------------
 
   // todosList.sort((a, b) => (a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1));
+  todosList.sort((a, b) => b.id - a.id);
 
   let filterList = [...todosList];
 
