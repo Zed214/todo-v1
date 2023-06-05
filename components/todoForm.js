@@ -66,6 +66,7 @@ export default function TodoForm({ objTodo, onClose }) {
                         </span>
                       </div>
                       <input
+                        maxLength={50}
                         type="text"
                         className="input input-bordered input-sm w-full font-bold focus:outline-2 focus:outline-gray-300"
                         {...register("title", { required: "Title is required" })}

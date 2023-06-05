@@ -82,6 +82,7 @@ export default function Home() {
       <div className="my-6 flex justify-between">
         <form className="space-x-2" onSubmit={onSubmitAddTodo}>
           <input
+            maxLength={50}
             className="input input-bordered input-sm w-64 focus:outline-none font-semibold"
             onChange={(e) => setNewTodoTitle(e.target.value)}
             value={newTodoTitle}
@@ -96,6 +97,7 @@ export default function Home() {
           </button>
         </form>
         <input
+          maxLength={50}
           className="input input-bordered input-sm max-w-xs focus:outline-none"
           onChange={(e) => setSearch(e.target.value)}
           value={search}

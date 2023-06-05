@@ -126,6 +126,7 @@ const TodoItems = () => {
         </div>
         <div>
           <input
+            maxLength={50}
             placeholder="Find item"
             type="search"
             className="input input-bordered input-sm focus:outline-none"
