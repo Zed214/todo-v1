@@ -7,7 +7,6 @@ import _ from "lodash";
 import TodoForm from "../components/todoForm";
 
 export default function Home() {
-  // const refNewTodo = useRef();
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -23,6 +22,9 @@ export default function Home() {
     queryFn: () => getTodos(),
   });
 
+  // *-----------------------------------
+  // * ----------- MUTATION -------------
+
   const addTodoMutation = useMutation({
     mutationFn: (newTodo) => addTodo(newTodo),
     onSuccess: (data) => {
@@ -36,6 +38,9 @@ export default function Home() {
     onSuccess: () => queryClient.invalidateQueries(["todos"]),
   });
 
+  // *-----------------------------------
+  // * ----------- ACTION -------------
+
   const onSubmitAddTodo = (e) => {
     e.preventDefault();
     const title = newTodoTitle;
@@ -48,6 +53,9 @@ export default function Home() {
       <span className="loading loading-dots loading-lg  my-10 mx-auto flex justify-center text-primary"></span>
     );
 
+  // *-----------------------------------
+  // * ----------- FILTER DATA -------------
+
   // todosList.sort((a, b) => (a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1));
 
   let filterList = [...todosList];
@@ -57,6 +65,9 @@ export default function Home() {
       (item) => item.title.toLowerCase().search(search.toLowerCase()) >= 0
     );
   }
+
+  // *-----------------------------------
+  // * ----------- RETURN -------------
 
   return (
     <div className="p-2">

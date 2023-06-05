@@ -16,13 +16,15 @@ const TodoItems = () => {
   const todoID = router.query.todoID ?? 1;
   const queryClient = useQueryClient();
 
-  // const queryResult = useQueries({
   const [todoQuery, itemsQuery] = useQueries({
     queries: [
       { queryKey: ["todo", todoID], queryFn: () => getTodo(todoID) },
       { queryKey: ["items", todoID], queryFn: () => getItems(todoID) },
     ],
   });
+
+  // *-----------------------------------
+  // * ----------- MUTATION -------------
 
   const editStatItemMutation = useMutation({
     mutationFn: (itemData) => editItem(todoID, itemData.id, itemData),
@@ -42,7 +44,9 @@ const TodoItems = () => {
   const { data: todo } = todoQuery;
   const { data: items } = itemsQuery;
 
-  // --- DATA edit and filter
+  // *-----------------------------------
+  // * ----------- FILTER DATA -------------
+
   EditStatItem(items);
   let filterItems = items.filter((item) => arrFilter.includes(item.status));
   if (search.length > 0)
@@ -58,11 +62,17 @@ const TodoItems = () => {
     }
   };
 
+  // *-----------------------------------
+  // * ----------- DESIGN -------------
+
   const statusDsgn = {
     active: "bg-orange-200",
     completed: "bg-green-200",
     undefine: "bg-gray-200",
   };
+
+  // *-----------------------------------
+  // * ----------- RETURN -------------
 
   return (
     <div className="p-2">
