@@ -118,7 +118,7 @@ export default function Home() {
       {filterList.map((item) => (
         <div
           key={item.id}
-          className="border rounded my-2 p-2 h-10 flex justify-between shadow gap-2"
+          className="border rounded border-gray-300 my-2 p-2 h-10 flex justify-between shadow gap-2"
         >
           <Link className="w-max flex-grow" href={`/todo/${item.id}`}>
             <h4 className="font-semibold hover:font-bold text-md">{item.title}</h4>

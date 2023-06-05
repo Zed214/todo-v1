@@ -144,7 +144,7 @@ const TodoItems = () => {
       </div>
       <div className="divider mt-2"></div>
       {filterItems.map((item) => (
-        <div className="border rounded my-2 p-2 shadow" key={item.id}>
+        <div className="border  border-gray-300 rounded my-2 p-2 shadow" key={item.id}>
           <div className="flex justify-between items-baseline mb-2 gap-4">
             <div className="space-x-2 items-baseline flex flex-nowrap">
               <select
