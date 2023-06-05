@@ -2,11 +2,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
 import { addItem, editItem } from "../utils/dataFetching";
+import { dateStrFormat } from "../utils/editData";
+import { useForm } from "react-hook-form";
+import _ from "lodash";
 
 export default function ItemForm({ todoID, itemObj, onClose }) {
   const queryClient = useQueryClient();
 
-  const isEditMode = Object.entries(itemObj).length > 0;
+  const isEditMode = !_.isEmpty(itemObj);
 
   const initFormValues = {
     title: "",
@@ -14,50 +17,54 @@ export default function ItemForm({ todoID, itemObj, onClose }) {
     deadline: new Date(),
   };
 
-  const [itemData, setItemData] = useState(isEditMode ? itemObj : initFormValues);
+  const form = useForm({ defaultValues: isEditMode ? itemObj : initFormValues });
+  const { register, handleSubmit, reset } = form;
 
   //* ---- MUTATION ------
 
   const addItemMutation = useMutation({
-    mutationFn: () => addItem(todoID, itemData),
+    mutationFn: (itemData) => addItem(todoID, itemData),
     onSuccess: () => {
-      setItemData(initFormValues);
+      reset(initFormValues);
       queryClient.invalidateQueries("items");
     },
   });
 
   const editItemMutation = useMutation({
-    mutationFn: () => editItem(todoID, itemObj.id, itemData),
+    mutationFn: (itemData) => editItem(todoID, itemObj.id, itemData),
     onSuccess: () => {
-      setItemData(initFormValues);
+      reset(initFormValues);
       queryClient.invalidateQueries("items");
     },
   });
 
   //* ---- HANDLERS ------
 
-  const addHandle = () => {
-    addItemMutation.mutate();
-  };
+  let action = "";
 
-  const addCloseHandle = () => {
-    addItemMutation.mutate();
-    onClose();
-  };
+  const onSubmit = (data) => {
+    if (isEditMode) {
+      if (action === "Edit_and_Close") {
+        editItemMutation.mutate(data);
+        onClose();
+      }
+    } else {
+      if (action === "Add") {
+        addItemMutation.mutate(data);
+      }
 
-  const editCloseHandle = () => {
-    editItemMutation.mutate();
-    onClose();
+      if (action === "Add_and_Close") {
+        addItemMutation.mutate(data);
+        onClose();
+      }
+    }
   };
 
   function closeModal() {
-    setItemData(initFormValues);
     onClose();
   }
 
-  function openModal() {}
-
-  //! ---- RETURN ------
+  //* ---- RETURN ------
 
   return (
     <>
@@ -90,73 +97,74 @@ export default function ItemForm({ todoID, itemObj, onClose }) {
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 {}">
                     {isEditMode ? "Edit item" : "Add item"}
                   </Dialog.Title>
-                  <div className="my-2">
-                    <div>Title:</div>
-                    <input
-                      type="text"
-                      className="input input-bordered input-sm w-full font-bold focus:outline-2 focus:outline-gray-300"
-                      value={itemData.title}
-                      onChange={(e) => {
-                        setItemData({ ...itemData, title: e.target.value });
-                      }}
-                    />
-                  </div>
-                  <div className="my-2">
-                    <div>Description:</div>
-                    <textarea
-                      maxLength={500}
-                      className=" textarea textarea-bordered w-full h-64"
-                      value={itemData.text}
-                      onChange={(e) => {
-                        setItemData({ ...itemData, text: e.target.value });
-                      }}
-                    ></textarea>
-                    <p className="text-sm justify-end flex text-gray-700">max 500 characters</p>
-                  </div>
+                  <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <div className="my-2">
+                      <div>Title:</div>
+                      <input
+                        type="text"
+                        className="input input-bordered input-sm w-full font-bold focus:outline-2 focus:outline-gray-300"
+                        {...register("title", { required: "Title is required" })}
+                      />
+                    </div>
+                    <div className="my-2">
+                      <div>Description:</div>
+                      <textarea
+                        maxLength={500}
+                        className=" textarea textarea-bordered w-full h-64"
+                        {...register("text", { required: "Text is required" })}
+                      ></textarea>
+                      <p className="text-sm justify-end flex text-gray-700">max 500 characters</p>
+                    </div>
 
-                  <div className="my-2">
-                    <div>Deadline:</div>
-                    <input
-                      type="date"
-                      maxLength={500}
-                      className="input textarea-bordered w-full focus:outline-gray-300 font-semibold"
-                      value={itemData.deadline}
-                      onChange={(e) => {
-                        setItemData({ ...itemData, deadline: e.target.value });
-                      }}
-                    ></input>
-                  </div>
+                    <div className="my-2">
+                      <div>Deadline:</div>
+                      <input
+                        type="date"
+                        maxLength={500}
+                        className="input textarea-bordered w-full focus:outline-gray-300 font-semibold"
+                        // value={itemData.deadline}
+                        {...register("deadline", {
+                          required: "Text is required",
+                          valueAsDate: true,
+                        })}
+                      ></input>
+                    </div>
 
-                  <div className="divider"></div>
+                    <div className="divider"></div>
 
-                  <div className="flex justify-between gap-2">
-                    <button className="btn btn-warning flex-grow" onClick={() => closeModal()}>
-                      Cancel
-                    </button>
-                    <button
-                      style={{ display: isEditMode ? "none" : null }}
-                      className="btn btn-success flex-grow"
-                      onClick={() => addHandle()}
-                    >
-                      Add
-                    </button>
-                    <button
-                      style={{ display: isEditMode ? "none" : null }}
-                      type="submit"
-                      className="btn btn-success flex-grow"
-                      onClick={() => addCloseHandle()}
-                    >
-                      Add and close
-                    </button>
-                    <button
-                      style={{ display: isEditMode ? null : "none" }}
-                      type="submit"
-                      className="btn btn-success flex-grow"
-                      onClick={() => editCloseHandle()}
-                    >
-                      Save
-                    </button>
-                  </div>
+                    <div className="flex justify-between gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-warning flex-grow"
+                        onClick={() => closeModal()}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        style={{ display: isEditMode ? "none" : null }}
+                        className="btn btn-success flex-grow"
+                        onClick={() => (action = "Add")}
+                      >
+                        Add
+                      </button>
+                      <button
+                        style={{ display: isEditMode ? "none" : null }}
+                        type="submit"
+                        className="btn btn-success flex-grow"
+                        onClick={() => (action = "Add_and_Close")}
+                      >
+                        Add and close
+                      </button>
+                      <button
+                        style={{ display: isEditMode ? null : "none" }}
+                        type="submit"
+                        className="btn btn-success flex-grow"
+                        onClick={() => (action = "Edit_and_Close")}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </form>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
