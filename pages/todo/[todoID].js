@@ -176,7 +176,9 @@ const TodoItems = () => {
               <button
                 className="text-gray-400 hover:text-red-400"
                 onClick={() => {
-                  deleteItemMutation.mutate(item.id);
+                  if (confirm(`Do you want to delete ${item.title} item?`)) {
+                    deleteItemMutation.mutate(item.id);
+                  }
                 }}
               >
                 <svg

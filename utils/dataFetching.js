@@ -21,6 +21,11 @@ export const addTodo = async (newTodo) => {
   return response.data;
 };
 
+export const editTodo = async (todoID, todoData) => {
+  const response = await todoApi.put(`/todos/${todoID}`, todoData);
+  return response.data;
+};
+
 export const deleteTodo = async (todoID) => {
   const response = await todoApi.delete(`/todos/${todoID}`);
   return response.data;

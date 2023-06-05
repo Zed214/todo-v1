@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import _ from "lodash";
+import TodoForm from "../components/todoForm";
 
 export default function Home() {
   // const refNewTodo = useRef();
@@ -12,6 +13,8 @@ export default function Home() {
 
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [search, setSearch] = useState("");
+  const [isOpenForm, setIsOpenForm] = useState(false);
+  const [objTodo, setObjTodo] = useState({});
 
   const [editTodo, setEditTodo] = useState({});
 
@@ -45,7 +48,7 @@ export default function Home() {
       <span className="loading loading-dots loading-lg  my-10 mx-auto flex justify-center text-primary"></span>
     );
 
-  todosList.sort((a, b) => (a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1));
+  // todosList.sort((a, b) => (a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1));
 
   let filterList = [...todosList];
 
@@ -57,8 +60,16 @@ export default function Home() {
 
   return (
     <div className="p-2">
+      {isOpenForm && (
+        <TodoForm
+          objTodo={objTodo}
+          onClose={() => {
+            setIsOpenForm(false);
+          }}
+        />
+      )}
       <div className="my-6 flex justify-between">
-        <form className="space-x-2 " onSubmit={onSubmitAddTodo}>
+        <form className="space-x-2" onSubmit={onSubmitAddTodo}>
           <input
             className="input input-bordered input-sm w-64 focus:outline-none font-semibold"
             onChange={(e) => setNewTodoTitle(e.target.value)}
@@ -66,11 +77,11 @@ export default function Home() {
             type="text"
           />
           <button
-            className="btn btn-success btn-sm"
+            className="btn bg-green-300 focus:bg-green-300 btn-sm"
             type="submit"
             disabled={newTodoTitle.length > 0 ? false : true}
           >
-            Add todo list
+            Add
           </button>
         </form>
         <input
@@ -91,7 +102,7 @@ export default function Home() {
             <h4 className="font-semibold   hover:font-bold ">{item.title}</h4>
           </Link>
           {_.isEmpty(editTodo) && (
-            <div>
+            <div className="space-x-4">
               <button>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -100,6 +111,10 @@ export default function Home() {
                   strokeWidth={1.5}
                   stroke="currentColor"
                   className="w-6 h-6  text-gray-400 hover:text-blue-400"
+                  onClick={() => {
+                    setObjTodo(item);
+                    setIsOpenForm(true);
+                  }}
                 >
                   <path
                     strokeLinecap="round"
@@ -112,7 +127,7 @@ export default function Home() {
               <button
                 style={{ cursor: "pointer" }}
                 onClick={() => {
-                  let text = "Will you delete this todo list?";
+                  let text = `Do you want to delete ${item.title} todo list?`;
                   if (confirm(text) == true) {
                     deleteTodoMutation.mutate(item.id);
                   }

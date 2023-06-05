@@ -6,7 +6,7 @@ const Layout = ({ children }) => {
     <div className=" w-[768px] m-auto flex flex-col h-screen overflow-hidden ">
       <div className="border-b-2 border-primary py-3">
         <Link href={"/"}>
-          <span className="font-todofont text-3xl m-2">ToDo Lists</span>
+          <span className="font-todofont text-3xl m-2 hover:font-semibold">ToDo Lists</span>
         </Link>
       </div>
 

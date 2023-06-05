@@ -18,7 +18,8 @@ export default function ItemForm({ todoID, itemObj, onClose }) {
   };
 
   const form = useForm({ defaultValues: isEditMode ? itemObj : initFormValues });
-  const { register, handleSubmit, reset } = form;
+  const { register, handleSubmit, reset, formState } = form;
+  const { errors } = formState;
 
   //* ---- MUTATION ------
 
@@ -99,32 +100,48 @@ export default function ItemForm({ todoID, itemObj, onClose }) {
                   </Dialog.Title>
                   <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <div className="my-2">
-                      <div>Title:</div>
+                      <div className="flex justify-between">
+                        <span>Title:</span>
+                        <span className="text-sm font-semibold text-red-500">
+                          {errors.title?.message}
+                        </span>
+                      </div>
                       <input
                         type="text"
                         className="input input-bordered input-sm w-full font-bold focus:outline-2 focus:outline-gray-300"
                         {...register("title", { required: "Title is required" })}
                       />
                     </div>
+
                     <div className="my-2">
-                      <div>Description:</div>
+                      <div className="flex justify-between">
+                        <span>Description:</span>
+                        <span className="text-sm font-semibold text-red-500">
+                          {errors.text?.message}
+                        </span>
+                      </div>
                       <textarea
                         maxLength={500}
                         className=" textarea textarea-bordered w-full h-64"
-                        {...register("text", { required: "Text is required" })}
+                        {...register("text", { required: "Description is required" })}
                       ></textarea>
                       <p className="text-sm justify-end flex text-gray-700">max 500 characters</p>
                     </div>
 
                     <div className="my-2">
-                      <div>Deadline:</div>
+                      <div className="flex justify-between">
+                        <span>Deadline:</span>
+                        <span className="text-sm font-semibold text-red-500">
+                          {errors.deadline?.message}
+                        </span>
+                      </div>
                       <input
                         type="date"
                         maxLength={500}
                         className="input textarea-bordered w-full focus:outline-gray-300 font-semibold"
                         // value={itemData.deadline}
                         {...register("deadline", {
-                          required: "Text is required",
+                          required: "Deadline is required",
                           valueAsDate: true,
                         })}
                       ></input>
