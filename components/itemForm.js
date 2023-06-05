@@ -126,7 +126,7 @@ export default function ItemForm({ todoID, itemObj, onClose }) {
                         className=" textarea textarea-bordered w-full h-64"
                         {...register("text", { required: "Description is required" })}
                       ></textarea>
-                      <p className="text-sm justify-end flex text-gray-700">max 500 characters</p>
+                      <p className="text-sm justify-end flex text-gray-600">max 500 characters</p>
                     </div>
 
                     <div className="my-2">

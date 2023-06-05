@@ -55,7 +55,7 @@ export default function Home() {
     setNewTodoTitle("");
   };
 
-  if (status === "loading" || deleteTodoMutation.status === "loading")
+  if (todosList === undefined || status.isLoading || deleteTodoMutation.isLoading)
     return (
       <div>
         <span className="loading loading-dots loading-lg  my-10 mx-auto flex justify-center text-primary"></span>
@@ -65,7 +65,6 @@ export default function Home() {
   // *-----------------------------------
   // * ----------- FILTER DATA -------------
 
-  // todosList.sort((a, b) => (a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1));
   todosList.sort((a, b) => b.id - a.id);
 
   let filterList = [...todosList];
@@ -99,7 +98,7 @@ export default function Home() {
             type="text"
           />
           <button
-            className="btn bg-green-300 focus:bg-green-300 btn-sm"
+            className="btn btn-success btn-sm"
             type="submit"
             disabled={newTodoTitle.length > 0 ? false : true}
           >
@@ -119,7 +118,7 @@ export default function Home() {
       {filterList.map((item) => (
         <div
           key={item.id}
-          className="border rounded my-2 p-2 h-10 flex justify-between shadow-sm gap-2"
+          className="border rounded my-2 p-2 h-10 flex justify-between shadow gap-2"
         >
           <Link className="w-max flex-grow" href={`/todo/${item.id}`}>
             <h4 className="font-semibold hover:font-bold text-md">{item.title}</h4>

@@ -36,7 +36,12 @@ const TodoItems = () => {
     onSuccess: () => queryClient.invalidateQueries(["items"]),
   });
 
-  if (todoQuery.isLoading || itemsQuery.isLoading)
+  if (
+    todoQuery.isLoading ||
+    itemsQuery.isLoading ||
+    editStatItemMutation.isLoading ||
+    deleteItemMutation.isLoading
+  )
     return (
       <span className="loading loading-dots loading-lg  my-10 mx-auto flex justify-center text-primary"></span>
     );
